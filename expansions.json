@@ -1,0 +1,18 @@
+{
+  "base": true,
+  "intrigue": true,
+  "seaside": true,
+  "alchemy": false,
+  "prosperity": false,
+  "hinterlands": false,
+  "darkages": true,
+  "cornguilds": true,
+  "adventures": true,
+  "empires": true,
+  "nocturne": true,
+  "renaissance": false,
+  "menagerie": false,
+  "allies": false,
+  "plunder": false,
+  "risingsun": false
+}

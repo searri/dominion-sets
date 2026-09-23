@@ -1,0 +1,356 @@
+/* Dominion Recommended Sets - Modern UI Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Colors - Light Theme */
+  --bg-page: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-secondary: #f8fafc;
+  --border-subtle: #e2e8f0;
+  --border-prominent: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  --accent-gold: #d97706;
+  --accent-gold-hover: #b45309;
+  --accent-gold-subtle: #fef3c7;
+  --accent-gold-text: #92400e;
+
+  --accent-blue: #2563eb;
+  --accent-green: #16a34a;
+  --accent-green-subtle: #dcfce7;
+  --accent-green-text: #166534;
+  --accent-red: #dc2626;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --card-zoom-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+
+  --font-serif: 'Cinzel', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html.dark {
+  /* Colors - Dark Theme */
+  --bg-page: #0b0f19;
+  --bg-surface: #131b2e;
+  --bg-surface-elevated: #1a243d;
+  --bg-surface-secondary: #0f172a;
+  --border-subtle: #1e293b;
+  --border-prominent: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent-gold: #f59e0b;
+  --accent-gold-hover: #fbbf24;
+  --accent-gold-subtle: #451a03;
+  --accent-gold-text: #fef3c7;
+
+  --accent-blue: #3b82f6;
+  --accent-green: #22c55e;
+  --accent-green-subtle: #052e16;
+  --accent-green-text: #86efac;
+  --accent-red: #ef4444;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.6);
+  --card-zoom-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  min-height: 100vh;
+}
+
+h1, h2, h3, .brand-title {
+  font-family: var(--font-serif);
+  letter-spacing: 0.02em;
+}
+
+/* Expansion Color Badges */
+.exp-badge-base { background: #1d4ed8; color: #ffffff; }
+.exp-badge-intrigue { background: #475569; color: #ffffff; }
+.exp-badge-seaside { background: #0284c7; color: #ffffff; }
+.exp-badge-alchemy { background: #7e22ce; color: #ffffff; }
+.exp-badge-prosperity { background: #b45309; color: #ffffff; }
+.exp-badge-hinterlands { background: #15803d; color: #ffffff; }
+.exp-badge-darkages { background: #854d0e; color: #ffffff; }
+.exp-badge-cornguilds { background: #c2410c; color: #ffffff; }
+.exp-badge-adventures { background: #047857; color: #ffffff; }
+.exp-badge-empires { background: #b91c1c; color: #ffffff; }
+.exp-badge-nocturne { background: #312e81; color: #ffffff; }
+.exp-badge-renaissance { background: #9a3412; color: #ffffff; }
+.exp-badge-menagerie { background: #166534; color: #ffffff; }
+.exp-badge-allies { background: #a16207; color: #ffffff; }
+.exp-badge-plunder { background: #0f766e; color: #ffffff; }
+.exp-badge-risingsun { background: #c026d3; color: #ffffff; }
+
+/* Expansion Select Chip */
+.expansion-chip {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1.5px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.expansion-chip:hover:not(.disabled) {
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.expansion-chip.selected {
+  border-color: var(--accent-gold);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
+  box-shadow: 0 0 0 1px var(--accent-gold), var(--shadow-md);
+}
+
+.expansion-chip.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.85);
+  background-color: var(--bg-surface-secondary);
+}
+
+/* Shown when other expansions have known combinations with the current selection */
+.expansion-chip.has-combination {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 1px var(--accent-green), var(--shadow-sm);
+}
+
+.expansion-chip.has-combination:hover:not(.disabled) {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 1px var(--accent-green), var(--shadow-md);
+}
+
+/* Chips with no combinations for the current selection are dimmed */
+.expansion-chip.no-combination {
+  opacity: 0.35;
+  filter: grayscale(0.6);
+}
+
+/* Kingdom Card Item Container */
+.kingdom-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.kingdom-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-prominent);
+}
+
+
+
+/* Card Visual Tiles */
+.card-tile {
+  cursor: pointer;
+  position: relative;
+  aspect-ratio: 5 / 8;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--bg-surface-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.card-tile:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-gold);
+  z-index: 10;
+}
+
+.card-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Landscape Cards (Horizontal: Events, Projects, Ways, Landmarks, Traits) */
+.landscape-tile {
+  cursor: pointer;
+  position: relative;
+  aspect-ratio: 8 / 5;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--bg-surface-secondary);
+  border: 1.5px solid #d97706;
+}
+
+.landscape-tile:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.landscape-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Desktop Hover Zoom Preview Popup */
+#hoverPreviewPopup {
+  position: fixed;
+  z-index: 999;
+  pointer-events: none;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: var(--card-zoom-shadow);
+  border: 2px solid var(--accent-gold);
+  background-color: #0b0f19;
+  transform: translate(-50%, -100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  max-width: 320px;
+  max-height: 480px;
+}
+
+#hoverPreviewPopup.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#hoverPreviewPopup img {
+  display: block;
+  width: auto;
+  max-width: 290px;
+  max-height: 440px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+/* Modal Lightbox for Full Preview */
+#previewModal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  padding: 1.5rem;
+}
+
+#previewModal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#previewModalContent {
+  max-width: 90vw;
+  max-height: 90vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#previewModalImg {
+  max-width: 85vw;
+  max-height: 80vh;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+  border: 2px solid var(--accent-gold);
+  object-fit: contain;
+}
+
+
+
+/* Tab Navigation */
+.nav-tab {
+  cursor: pointer;
+  position: relative;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-secondary);
+}
+
+.nav-tab.active {
+  color: var(--accent-gold);
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+html.dark .nav-tab.active {
+  color: var(--accent-gold);
+  background-color: var(--bg-surface-elevated);
+}
+
+/* Location container transitions */
+.tab-location {
+  display: none;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.tab-location.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-prominent);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-gold);
+}

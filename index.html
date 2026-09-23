@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rick's Dominion Sets - Extra & Official Recommended Sets</title>
+  <meta name="description" content="A modern, hand-crafted collection of extra and official recommended kingdoms for the board game Dominion." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Cinzel', 'Georgia', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+
+<body class="bg-slate-100 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <!-- Top Navigation / Header -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#131b2e]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      
+      <!-- Brand / Title -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goToLocation('extras')">
+        <div class="w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-amber-500/20 flex-shrink-0">
+          <img src="./icons/Icon.png" alt="Dominion Sets icon" class="w-full h-full object-cover" />
+        </div>
+        <div>
+          <h1 class="brand-title text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
+            Dominion Sets
+          </h1>
+          <p class="text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+            Extra & Official Recommended Kingdoms
+          </p>
+        </div>
+      </div>
+
+      <!-- Right controls: Theme Toggle -->
+      <div class="flex items-center gap-2">
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors" title="Toggle Light / Dark theme">
+          <!-- Sun Icon (shown in dark mode) -->
+          <svg id="themeSunIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          <!-- Moon Icon (shown in light mode) -->
+          <svg id="themeMoonIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Segmented Navigation Tabs -->
+    <div class="border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-[#0f172a]/70">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <nav id="tabs" class="flex items-center gap-1.5 overflow-x-auto py-2 scrollbar-none" aria-label="Main Navigation">
+          <button id="tab_extras" class="nav-tab active" onclick="goToLocation('extras')">
+            Extra Sets
+          </button>
+          <button id="tab_dailies" class="nav-tab" onclick="goToLocation('dailies')">
+            Dailies
+          </button>
+          <button id="tab_official" class="nav-tab" onclick="goToLocation('official')">
+            Official Sets
+          </button>
+          <button id="tab_about" class="nav-tab" onclick="goToLocation('about')">
+            About
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Location: Kingdoms View (Extras & Official) -->
+    <section id="loc_kingdoms" class="tab-location active">
+      
+      <!-- Expansion Selector Card -->
+      <div class="bg-white dark:bg-[#131b2e] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm mb-8 transition-colors">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <h2 id="kingdoms_title" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+              Extra Recommended Sets
+            </h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Select expansions to get recommended Dominion kingdoms.
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="selectionCountBadge" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700">
+              0 selected
+            </span>
+          </div>
+        </div>
+
+        <p id="disabledNote" class="hidden"></p>
+
+        <!-- Hidden original checkboxes for data binding -->
+        <div class="hidden">
+          <input type="checkbox" id="base" name="base" value="base">
+          <input type="checkbox" id="intrigue" name="intrigue" value="intrigue">
+          <input type="checkbox" id="seaside" name="seaside" value="seaside">
+          <input type="checkbox" id="alchemy" name="alchemy" value="alchemy" disabled>
+          <input type="checkbox" id="prosperity" name="prosperity" value="prosperity">
+          <input type="checkbox" id="hinterlands" name="hinterlands" value="hinterlands">
+          <input type="checkbox" id="darkages" name="darkages" value="darkages" disabled>
+          <input type="checkbox" id="cornguilds" name="cornguilds" value="cornguilds" disabled>
+          <input type="checkbox" id="adventures" name="adventures" value="adventures" disabled>
+          <input type="checkbox" id="empires" name="empires" value="empires">
+          <input type="checkbox" id="nocturne" name="nocturne" value="nocturne" disabled>
+          <input type="checkbox" id="renaissance" name="renaissance" value="renaissance">
+          <input type="checkbox" id="menagerie" name="menagerie" value="menagerie">
+          <input type="checkbox" id="allies" name="allies" value="allies" disabled>
+          <input type="checkbox" id="plunder" name="plunder" value="plunder" disabled>
+          <input type="checkbox" id="risingsun" name="risingsun" value="risingsun" disabled>
+        </div>
+
+        <!-- Expansion Grid Chips -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 my-5">
+          
+          <div id="chip_base" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('base')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-base flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Base 2nd Ed</span>
+          </div>
+
+          <div id="chip_intrigue" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('intrigue')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-intrigue flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Intrigue 2nd Ed</span>
+          </div>
+
+          <div id="chip_seaside" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('seaside')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-seaside flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Seaside 2nd Ed</span>
+          </div>
+
+          <div id="chip_alchemy" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('alchemy')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-alchemy flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Alchemy</span>
+          </div>
+
+          <div id="chip_prosperity" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('prosperity')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-prosperity flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Prosperity 2nd Ed</span>
+          </div>
+
+          <div id="chip_hinterlands" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('hinterlands')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-hinterlands flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Hinterlands 2nd Ed</span>
+          </div>
+
+          <div id="chip_darkages" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('darkages')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-darkages flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Dark Ages</span>
+          </div>
+
+          <div id="chip_cornguilds" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('cornguilds')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-cornguilds flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Cornucopia & Guilds 2E</span>
+          </div>
+
+          <div id="chip_adventures" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('adventures')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-adventures flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Adventures</span>
+          </div>
+
+          <div id="chip_empires" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('empires')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-empires flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Empires</span>
+          </div>
+
+          <div id="chip_nocturne" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('nocturne')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-nocturne flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Nocturne</span>
+          </div>
+
+          <div id="chip_renaissance" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('renaissance')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-renaissance flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Renaissance</span>
+          </div>
+
+          <div id="chip_menagerie" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('menagerie')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-menagerie flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Menagerie</span>
+          </div>
+
+          <div id="chip_allies" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('allies')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-allies flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Allies</span>
+          </div>
+
+          <div id="chip_plunder" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('plunder')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-plunder flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Plunder</span>
+          </div>
+
+          <div id="chip_risingsun" class="expansion-chip rounded-xl p-3 flex items-center gap-3" onclick="toggleExpansion('risingsun')">
+            <span class="w-3.5 h-3.5 rounded-full exp-badge-risingsun flex-shrink-0"></span>
+            <span class="text-sm font-semibold truncate">Rising Sun</span>
+          </div>
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-wrap items-center gap-3 pt-4">
+          <button onclick="getSets()" class="px-6 py-3 rounded-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md shadow-amber-500/20 hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+            <img src="./icons/Base_Cards_icon.png" alt="" class="w-5 h-5 object-contain" />
+            <span>Get Recommended Sets</span>
+          </button>
+          
+          <button onclick="clearSets()" class="px-5 py-3 rounded-xl font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-all active:scale-95">
+            Clear Selection
+          </button>
+        </div>
+
+        <div id="errors"></div>
+      </div>
+
+      <!-- Results Summary Bar -->
+      <div id="resultsSummary" class="hidden flex items-center justify-between px-4 py-3 mb-6 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-300 text-sm font-semibold">
+        <span id="resultsCountText">Found 10 sets</span>
+      </div>
+
+      <!-- Kingdom Cards Container -->
+      <div id="kingdomContainer" class="space-y-6"></div>
+
+      <!-- Pagination Container -->
+      <div id="paginationContainer" class="mt-8 pt-4"></div>
+
+    </section>
+
+    <!-- Location: About -->
+    <section id="loc_about" class="tab-location">
+      <div class="bg-white dark:bg-[#131b2e] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm prose dark:prose-invert max-w-none">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">About Extra Recommended Sets</h2>
+        <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed">
+          This site contains a curated collection of extra recommended sets for the board game <strong>Dominion</strong>, specifically for the expansions I own.
+        </p>
+        <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed">
+          The official sets from the rulebooks are also accessible on their own tab for easy reference. I have also collected sets from the Daily challenges that contain cards I own.
+        </p>
+        <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed">
+          The extra sets are designed by <strong>Kieran Millar</strong> and taken from <a href="https://kieranmillar.github.io/extra-recommended-sets/" class="font-semibold text-amber-600 dark:text-amber-400 underline underline-offset-2 hover:text-amber-500 dark:hover:text-amber-300 transition-colors" target="_blank">his site</a>.
+        </p>
+        <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed">
+          Got a suggestion for one? Open a Pull Request!
+        </p>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-[#131b2e]/50 py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+    <div class="max-w-6xl mx-auto px-4">
+      <p>Dominion is designed by Donald X. Vaccarino and published by Rio Grande Games</p>
+    </div>
+  </footer>
+
+  <!-- Floating Hover Zoom Preview (Desktop) -->
+  <div id="hoverPreviewPopup" class="shadow-2xl">
+    <img id="hoverPreviewImg" src="" alt="Card Zoom Preview" />
+  </div>
+
+  <!-- Scripts -->
+  <script src="./cardImages.js"></script>
+  <script src="./kingdoms.js"></script>
+  <script src="./dailyKingdoms.js"></script>
+  <script src="./officialKingdoms.js"></script>
+  <script src="./script.js"></script>
+</body>
+
+</html>
