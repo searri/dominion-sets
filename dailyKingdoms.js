@@ -65,5 +65,12 @@ var dailyKingdoms = [
         date: "2026-09-22",
         cards: ["Beggar", "Hermit", "Armory", "Procession", "Scavenger", "Wandering Minstrel", "Mystic", "Rogue", "Altar", "Hunting Grounds"],
         expansions: ["darkages"],
+    },
+    {
+        name: "Sep 16, 2026 Daily",
+        date: "2026-09-16",
+        cards: ["Engineer", "City Quarter", "Encampment / Plunder", "Patrician / Emporium", "Gladiator / Fortune", "Sacrifice", "Villa", "Archive", "Crown", "Forum"],
+        expansions: ["empires"],
+        landscapes: ["Triumphal Arch", "Triumph"],
     }
 ];
