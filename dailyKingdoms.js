@@ -72,5 +72,23 @@ var dailyKingdoms = [
         cards: ["Engineer", "City Quarter", "Encampment / Plunder", "Patrician / Emporium", "Gladiator / Fortune", "Sacrifice", "Villa", "Archive", "Crown", "Forum"],
         expansions: ["empires"],
         landscapes: ["Triumphal Arch", "Triumph"],
+    },
+    {
+        name: "Sep 29, 2026 Daily",
+        date: "2026-09-29",
+        cards: ["Lurker", "Shanty Town", "Wishing Well", "Bridge", "Conspirator", "Mill", "Secret Passage", "Torturer", "Trading Post", "Harem"],
+        expansions: ["intrigue"],
+    },
+    {
+        name: "Oct 6, 2026 Daily",
+        date: "2026-10-06",
+        cards: ["Courtyard", "Steward", "Baron", "Conspirator", "Ironworks", "Mill", "Courtier", "Duke", "Minion", "Trading Post"],
+        expansions: ["intrigue"],
+    },
+    {
+        name: "Oct 5, 2026 Daily",
+        date: "2026-10-05",
+        cards: ["Courtyard", "Lurker", "Moat", "Ironworks", "Moneylender", "Poacher", "Market", "Patrol", "Witch", "Harem"],
+        expansions: ["base", "intrigue"],
     }
 ];
