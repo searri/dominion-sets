@@ -3,7 +3,7 @@ var dailyKingdoms = [
         name: "Aug 4, 2026 Daily",
         date: "2026-08-04",
         cards: ["Poor House", "Forager", "Armory", "Feodum", "Scavenger", "Bandit Camp", "Count", "Graverobber", "Knights", "Pillage"],
-        extras: ["Spoils"],
+        extras: ["Spoils", "Shelters"],
         expansions: ["darkages"]
     },
     {
@@ -37,7 +37,7 @@ var dailyKingdoms = [
         name: "Sep 11, 2026 Daily",
         date: "2026-09-11",
         cards: ["Squire", "Sage", "Conspirator", "Bandit Camp", "Catacombs", "Counterfeit", "Minion", "Mystic", "Patrol", "Harem"],
-        extras: ["Spoils"],
+        extras: ["Spoils", "Shelters"],
         expansions: ["intrigue", "darkages"]
     },
     {
@@ -65,6 +65,7 @@ var dailyKingdoms = [
         date: "2026-09-22",
         cards: ["Beggar", "Hermit", "Armory", "Procession", "Scavenger", "Wandering Minstrel", "Mystic", "Rogue", "Altar", "Hunting Grounds"],
         expansions: ["darkages"],
+        extras: ["Shelters", "Madman"]
     },
     {
         name: "Sep 16, 2026 Daily",
@@ -90,5 +91,18 @@ var dailyKingdoms = [
         date: "2026-10-05",
         cards: ["Courtyard", "Lurker", "Moat", "Ironworks", "Moneylender", "Poacher", "Market", "Patrol", "Witch", "Harem"],
         expansions: ["base", "intrigue"],
+    },
+    {
+        name: "Oct 12, 2026 Daily",
+        date: "2026-10-12",
+        cards: ["Courtyard", "Pawn", "Bridge", "Conspirator", "Ironworks", "Militia", "Mill", "Smithy", "Torturer", "Artisan"],
+        expansions: ["base", "intrigue"]
+    },
+    {
+        name: "Oct 13, 2026 Daily",
+        date: "2026-10-13",
+        cards: ["Poor House", "Vagrant", "Forager", "Hermit", "Market Square", "Death Cart", "Bandit Camp", "Knights", "Rogue", "Hunting Grounds"],
+        extras: ["Shelters", "Spoils", "Madman"],
+        expansions: ["darkages"]
     }
 ];
