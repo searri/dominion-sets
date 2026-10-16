@@ -104,5 +104,12 @@ var dailyKingdoms = [
         cards: ["Poor House", "Vagrant", "Forager", "Hermit", "Market Square", "Death Cart", "Bandit Camp", "Knights", "Rogue", "Hunting Grounds"],
         extras: ["Shelters", "Spoils", "Madman"],
         expansions: ["darkages"]
+    },
+    {
+        name: "Oct 16, 2026 Daily",
+        date: "2026-10-16",
+        cards: ["Engineer", "City Quarter", "Hamlet", "Pawn", "Diplomat", "Farmhands", "Mill", "Villa", "Duke", "Torturer"],
+        landscapes: ["Basilica", "Baths"],
+        expansions: ["empires", "intrigue", "cornguilds"]
     }
 ];
