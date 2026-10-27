@@ -117,5 +117,12 @@ var dailyKingdoms = [
         date: "2026-10-21",
         cards: ["Lighthouse", "Farrier", "Blockade", "Plaza", "Sailor", "Tide Pools", "Treasure Map", "Baker", "Merchant Guild", "Soothsayer"],
         expansions: ["cornguilds", "seaside"]
+    },
+    {
+        name: "Oct 27, 2026 Daily",
+        date: "2026-10-27",
+        cards: ["Amulet", "Duplicate", "Messenger", "Port", "Transmogrify", "Distant Lands", "Lost City", "Relic", "Royal Carriage", "Storyteller"],
+        expansions: ["adventures"],
+        landscapes: ["Alms", "Seaway"]
     }
 ];
