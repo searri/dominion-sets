@@ -124,5 +124,13 @@ var dailyKingdoms = [
         cards: ["Amulet", "Duplicate", "Messenger", "Port", "Transmogrify", "Distant Lands", "Lost City", "Relic", "Royal Carriage", "Storyteller"],
         expansions: ["adventures"],
         landscapes: ["Alms", "Seaway"]
+    },
+    {
+        name: "Oct 30, 2026 Daily",
+        date: "2026-10-30",
+        cards: ["Castles", "Changeling", "Leprechaun", "Cemetery", "Temple", "Crown", "Forum", "Idol", "Replace", "Nobles"],
+        expansions: ["noctourne", "empires"],
+        landscapes: ["Colonnade", "Aqueduct"],
+        extras: ["Wish", "Ghost", "Boons", "Hexes"]
     }
 ];
