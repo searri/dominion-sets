@@ -132,5 +132,11 @@ var dailyKingdoms = [
         expansions: ["noctourne", "empires"],
         landscapes: ["Colonnade", "Aqueduct"],
         extras: ["Wish", "Ghost", "Boons", "Hexes"]
+    },
+    {
+        name: "Nov 2, 2026 Daily",
+        date: "2026-11-02",
+        cards: ["Farrier", "Merchant", "Vassal", "Village", "Workshop", "Infirmary", "Plaza", "Throne Room", "Journeyman", "Market"],
+        expansions: ["base", "cornguilds"]
     }
 ];
