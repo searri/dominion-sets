@@ -138,5 +138,11 @@ var dailyKingdoms = [
         date: "2026-11-02",
         cards: ["Farrier", "Merchant", "Vassal", "Village", "Workshop", "Infirmary", "Plaza", "Throne Room", "Journeyman", "Market"],
         expansions: ["base", "cornguilds"]
+    },
+    {
+        name: "Nov 3, 2026 Daily",
+        date: "2026-11-03",
+        cards: ["Courtyard", "Lurker", "Pawn", "Steward", "Bridge", "Duke", "Minion", "Trading Post", "Upgrade", "Harem"],
+        expansions: ["intrigue"]
     }
 ];
