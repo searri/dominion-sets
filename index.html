@@ -42,26 +42,77 @@
 
   <!-- Top Navigation / Header -->
   <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#131b2e]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3 sm:gap-4">
       
       <!-- Brand / Title -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="goToLocation('extras')">
-        <div class="w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-amber-500/20 flex-shrink-0">
+      <div class="flex items-center gap-2.5 sm:gap-3 cursor-pointer flex-shrink-0" onclick="goToLocation('extras')">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-amber-500/20 flex-shrink-0">
           <img src="./icons/Icon.png" alt="Dominion Sets icon" class="w-full h-full object-cover" />
         </div>
         <div>
-          <h1 class="brand-title text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
+          <h1 class="brand-title text-base sm:text-lg md:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
             Dominion Sets
           </h1>
-          <p class="text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+          <p class="hidden sm:block text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5">
             Extra & Official Recommended Kingdoms
           </p>
         </div>
       </div>
 
-      <!-- Right controls: Theme Toggle -->
-      <div class="flex items-center gap-2">
-        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors" title="Toggle Light / Dark theme">
+      <!-- Right controls: Search Bar & Theme Toggle -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-shrink min-w-0">
+        
+        <!-- Card Search Bar Container -->
+        <div id="cardSearchWrapper" class="relative w-36 xs:w-48 sm:w-64 md:w-80">
+          <div class="relative flex items-center">
+            <!-- Search Icon -->
+            <div class="absolute left-3 pointer-events-none text-slate-400 dark:text-slate-500 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            
+            <!-- Search Input -->
+            <input
+              id="cardSearchInput"
+              type="text"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls="cardAutocompleteDropdown"
+              aria-label="Search sets by card name"
+              placeholder="Search card..."
+              autocomplete="off"
+              spellcheck="false"
+              class="w-full pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl bg-slate-100 hover:bg-slate-200/70 focus:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:focus:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 border border-slate-200 dark:border-slate-700/80 focus:border-amber-500 dark:focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all shadow-sm"
+            />
+
+            <!-- Clear (X) Button -->
+            <button
+              id="cardSearchClearBtn"
+              type="button"
+              onclick="clearCardSearchInput()"
+              class="hidden absolute right-2.5 p-1 rounded-md text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 focus:outline-none transition-colors"
+              title="Clear search"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Autocomplete Dropdown List -->
+          <div
+            id="cardAutocompleteDropdown"
+            role="listbox"
+            class="hidden absolute right-0 sm:left-0 sm:right-auto top-full mt-2 w-72 sm:w-80 md:w-96 max-h-80 overflow-y-auto rounded-2xl bg-white dark:bg-[#131b2e] border border-slate-200 dark:border-slate-800 shadow-2xl z-50 py-1.5 focus:outline-none"
+          >
+            <!-- Suggestions injected via JS -->
+          </div>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80 transition-colors flex-shrink-0" title="Toggle Light / Dark theme">
           <!-- Sun Icon (shown in dark mode) -->
           <svg id="themeSunIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
@@ -71,6 +122,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
           </svg>
         </button>
+
       </div>
 
     </div>
@@ -102,8 +154,46 @@
     <!-- Location: Kingdoms View (Extras & Official) -->
     <section id="loc_kingdoms" class="tab-location active">
       
+      <!-- Card Search Results Header (shown during card search) -->
+      <div id="cardSearchResultsHeader" class="hidden bg-white dark:bg-[#131b2e] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm mb-8 transition-colors">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span class="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </span>
+              <h2 id="searchResultsTitle" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                Sets with Card
+              </h2>
+            </div>
+            <p id="searchResultsSubtitle" class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Searching across all categories (Extra Sets, Dailies, and Official Sets).
+            </p>
+          </div>
+          
+          <button onclick="clearCardSearch()" class="self-start md:self-auto px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-all active:scale-95 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            <span>Clear Search</span>
+          </button>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="mt-4">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+            Filter by Category:
+          </div>
+          <div id="searchCategoryFilters" class="flex flex-wrap items-center gap-2">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+
       <!-- Expansion Selector Card -->
-      <div class="bg-white dark:bg-[#131b2e] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm mb-8 transition-colors">
+      <div id="expansionSelectorCard" class="bg-white dark:bg-[#131b2e] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm mb-8 transition-colors">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
           <div>
             <h2 id="kingdoms_title" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">

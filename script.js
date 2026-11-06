@@ -17,12 +17,42 @@ const paginationContainer = document.getElementById("paginationContainer");
 const selectionCountBadge = document.getElementById("selectionCountBadge");
 const resultsSummaryElement = document.getElementById("resultsSummary");
 
+// Search & Autocomplete DOM Elements
+const cardSearchInput = document.getElementById("cardSearchInput");
+const cardSearchClearBtn = document.getElementById("cardSearchClearBtn");
+const cardAutocompleteDropdown = document.getElementById("cardAutocompleteDropdown");
+const cardSearchResultsHeader = document.getElementById("cardSearchResultsHeader");
+const searchResultsTitle = document.getElementById("searchResultsTitle");
+const searchResultsSubtitle = document.getElementById("searchResultsSubtitle");
+const searchCategoryFilters = document.getElementById("searchCategoryFilters");
+const expansionSelectorCard = document.getElementById("expansionSelectorCard");
+
 // Expansion Definitions
 const expansionKeys = [
   "base", "intrigue", "seaside", "alchemy", "prosperity", "hinterlands",
   "darkages", "cornguilds", "adventures", "empires", "nocturne",
   "renaissance", "menagerie", "allies", "plunder", "risingsun"
 ];
+
+// Expansion Metadata (Display names & badge styling)
+const expansionMeta = {
+  base: { name: "Base", colorClass: "exp-badge-base" },
+  intrigue: { name: "Intrigue", colorClass: "exp-badge-intrigue" },
+  seaside: { name: "Seaside", colorClass: "exp-badge-seaside" },
+  alchemy: { name: "Alchemy", colorClass: "exp-badge-alchemy" },
+  prosperity: { name: "Prosperity", colorClass: "exp-badge-prosperity" },
+  hinterlands: { name: "Hinterlands", colorClass: "exp-badge-hinterlands" },
+  darkages: { name: "Dark Ages", colorClass: "exp-badge-darkages" },
+  cornguilds: { name: "Cornucopia & Guilds", colorClass: "exp-badge-cornguilds" },
+  adventures: { name: "Adventures", colorClass: "exp-badge-adventures" },
+  empires: { name: "Empires", colorClass: "exp-badge-empires" },
+  nocturne: { name: "Nocturne", colorClass: "exp-badge-nocturne" },
+  renaissance: { name: "Renaissance", colorClass: "exp-badge-renaissance" },
+  menagerie: { name: "Menagerie", colorClass: "exp-badge-menagerie" },
+  allies: { name: "Allies", colorClass: "exp-badge-allies" },
+  plunder: { name: "Plunder", colorClass: "exp-badge-plunder" },
+  risingsun: { name: "Rising Sun", colorClass: "exp-badge-risingsun" }
+};
 
 // Set of expansions enabled via expansions.json (populated at startup)
 let enabledExpansions = new Set(expansionKeys);
@@ -32,6 +62,16 @@ const PAGE_SIZE = 10;
 let currentPage = 1;
 let currentFilteredKingdoms = [];
 let setCategory = "extras";
+
+// Search State
+let isCardSearchActive = false;
+let activeSearchCard = "";
+let searchCategoryFilter = "all"; // 'all' | 'extras' | 'dailies' | 'official'
+let searchAllResults = [];
+let searchCategoryResults = { extras: [], dailies: [], official: [] };
+let searchableCards = [];
+let activeSuggestionIndex = -1;
+let currentSuggestions = [];
 
 // ==========================================
 // Theme Controller
@@ -82,6 +122,10 @@ function getActiveDataset() {
 // Navigation & Tabs
 // ==========================================
 function goToLocation(loc) {
+  if (isCardSearchActive) {
+    clearCardSearch(false);
+  }
+
   const allLocs = [locKingdoms, locAbout];
   const allTabs = [tabExtras, tabOfficial, tabDailies, tabAbout];
 
@@ -230,6 +274,10 @@ function updateCombinationHighlights(selectedKeys) {
 }
 
 function clearSets() {
+  if (isCardSearchActive) {
+    clearCardSearch(false);
+  }
+
   if (errorsElement) errorsElement.textContent = "";
   if (resultsSummaryElement) resultsSummaryElement.classList.add("hidden");
   if (kingdomContainerElement) kingdomContainerElement.innerHTML = "";
@@ -349,7 +397,16 @@ function renderCurrentPage() {
   if (resultsSummaryElement) {
     const countText = document.getElementById("resultsCountText");
     if (countText) {
-      if (!isFiltered) {
+      if (isCardSearchActive) {
+        const catLabel = searchCategoryFilter === "all" ? "all categories" :
+          (searchCategoryFilter === "extras" ? "Extra Sets" :
+          (searchCategoryFilter === "dailies" ? "Daily Sets" : "Official Sets"));
+        if (total === 0) {
+          countText.textContent = `No sets found containing "${activeSearchCard}" in ${catLabel}`;
+        } else {
+          countText.textContent = `Found ${total} set${total === 1 ? '' : 's'} containing "${activeSearchCard}" in ${catLabel}${totalPages > 1 ? ` • Showing sets ${start + 1}–${end} (Page ${currentPage} of ${totalPages})` : ''}`;
+        }
+      } else if (!isFiltered) {
         countText.textContent = `All Sets (${total} total) • Showing sets ${start + 1}–${end} (Page ${currentPage} of ${totalPages})`;
       } else {
         countText.textContent = `Found ${total} recommended set${total === 1 ? '' : 's'}${totalPages > 1 ? ` • Showing ${start + 1}–${end} (Page ${currentPage} of ${totalPages})` : ''}`;
@@ -358,10 +415,32 @@ function renderCurrentPage() {
     resultsSummaryElement.classList.remove("hidden");
   }
 
-  pageKingdoms.forEach(kingdom => {
-    const container = createKingdomContainer(kingdom);
-    kingdomContainerElement.appendChild(container);
-  });
+  if (total === 0) {
+    const emptyMsg = document.createElement("div");
+    emptyMsg.className = "p-8 text-center bg-white dark:bg-[#131b2e] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm";
+    emptyMsg.innerHTML = `
+      <div class="inline-flex p-3 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 mb-3">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </div>
+      <h4 class="text-lg font-bold text-slate-900 dark:text-white">No Matching Sets Found</h4>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+        ${isCardSearchActive
+          ? `No sets containing "${escapeHtml(activeSearchCard)}" found in the selected category.`
+          : 'No sets match your current expansion combination.'}
+      </p>
+      ${isCardSearchActive ? `
+        <button onclick="clearCardSearch()" class="mt-4 px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all">
+          Clear Search & Return
+        </button>
+      ` : ''}
+    `;
+    kingdomContainerElement.appendChild(emptyMsg);
+  } else {
+    pageKingdoms.forEach(kingdom => {
+      const container = createKingdomContainer(kingdom);
+      kingdomContainerElement.appendChild(container);
+    });
+  }
 
   renderPaginationControls(totalPages, total, start, end);
 }
@@ -481,6 +560,23 @@ function createKingdomContainer(kingdom) {
   titleText.textContent = kingdom.name;
   titleGroup.appendChild(titleText);
 
+  // Category Badge (shown during search or if kingdom has category)
+  if (kingdom.category) {
+    let catBadgeClass = "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
+    let catLabel = "Extra Set";
+    if (kingdom.category === "dailies") {
+      catBadgeClass = "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30";
+      catLabel = "Daily Set";
+    } else if (kingdom.category === "official") {
+      catBadgeClass = "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30";
+      catLabel = "Official Set";
+    }
+    const catBadge = document.createElement("span");
+    catBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold border ${catBadgeClass}`;
+    catBadge.textContent = catLabel;
+    titleGroup.appendChild(catBadge);
+  }
+
   header.appendChild(titleGroup);
   container.appendChild(header);
 
@@ -586,6 +682,24 @@ function createCardTile(cardName, isLandscape) {
   const tile = document.createElement("div");
   tile.className = isLandscape ? "landscape-tile" : "card-tile";
 
+  // Highlight tile if it matches the searched card
+  if (isCardSearchActive && activeSearchCard) {
+    const normSearch = activeSearchCard.trim().toLowerCase();
+    const normName = cardName.trim().toLowerCase();
+    let matches = (normName === normSearch);
+    if (!matches && cardName.includes("/")) {
+      const parts = cardName.split("/").map(p => p.trim().toLowerCase());
+      if (parts.includes(normSearch)) matches = true;
+    }
+    if (!matches && normName.includes(normSearch)) {
+      matches = true;
+    }
+    if (matches) {
+      tile.classList.add("search-highlighted");
+      tile.setAttribute("title", `Matched search: ${cardName}`);
+    }
+  }
+
   // Check display name
   const displayName = cardName === "Harem" ? "Harem / Farm" : cardName;
   const lookupKey = cardName === "Harem / Farm" ? "Harem" : cardName;
@@ -688,6 +802,605 @@ function buildNotesString(kingdom) {
 }
 
 // ==========================================
+// Card Search & Autocomplete Controller
+// ==========================================
+
+function getExpansionKeyFromFolder(folder) {
+  if (!folder) return "unknown";
+  if (folder.startsWith("baseset")) return "base";
+  if (folder.startsWith("intrigue")) return "intrigue";
+  if (folder.startsWith("seaside")) return "seaside";
+  if (folder === "cornucopia" || folder === "guilds" || folder.startsWith("guildscornucopia")) return "cornguilds";
+  if (folder.startsWith("prosperity")) return "prosperity";
+  if (folder.startsWith("hinterlands")) return "hinterlands";
+  return folder;
+}
+
+function getCardExpansionKey(cardName) {
+  const folder = getCardExpansion(cardName);
+  return getExpansionKeyFromFolder(folder);
+}
+
+function getCardImage(cardName) {
+  if (typeof cardImages === "undefined") return "";
+  if (cardImages[cardName]) return cardImages[cardName];
+  if (cardName === "Harem / Farm" && cardImages["Harem"]) return cardImages["Harem"];
+  if (cardName === "Harem" && cardImages["Harem"]) return cardImages["Harem"];
+  if (cardName === "Farm" && cardImages["Harem"]) return cardImages["Harem"];
+
+  for (const key in cardImages) {
+    if (key.includes("/")) {
+      const parts = key.split("/").map(p => p.trim().toLowerCase());
+      if (parts.includes(cardName.toLowerCase())) {
+        return cardImages[key];
+      }
+    }
+  }
+  return "";
+}
+
+function isKingdomEnabled(k) {
+  if (!Array.isArray(k.expansions)) return true;
+  return k.expansions.every(key => enabledExpansions.has(key));
+}
+
+function buildCardSearchIndex() {
+  const cardMap = new Map();
+
+  const allDatasets = [
+    { cat: "extras", list: typeof kingdoms !== "undefined" ? kingdoms : [] },
+    { cat: "dailies", list: typeof dailyKingdoms !== "undefined" ? dailyKingdoms : [] },
+    { cat: "official", list: typeof officialKingdoms !== "undefined" ? officialKingdoms : [] }
+  ];
+
+  allDatasets.forEach(({ cat, list }) => {
+    list.forEach(k => {
+      const enabled = isKingdomEnabled(k);
+      const cardsInSet = new Set();
+
+      if (Array.isArray(k.cards)) {
+        k.cards.forEach(c => {
+          cardsInSet.add(c);
+          if (c.includes("/")) {
+            c.split("/").forEach(sub => cardsInSet.add(sub.trim()));
+          }
+        });
+      }
+
+      if (Array.isArray(k.landscapes)) {
+        k.landscapes.forEach(l => {
+          if (l.includes(",") && (typeof cardImages === "undefined" || !cardImages[l])) {
+            l.split(",").forEach(sub => cardsInSet.add(sub.trim()));
+          } else {
+            cardsInSet.add(l.trim());
+          }
+        });
+      }
+
+      [k.bane, k.obelisk, k.mouse, k.ferryman, k.riverboat].forEach(target => {
+        if (typeof target === "string" && target.trim()) {
+          cardsInSet.add(target.trim());
+        }
+      });
+
+      if (Array.isArray(k.druid)) {
+        k.druid.forEach(boon => cardsInSet.add(boon.trim()));
+      }
+
+      cardsInSet.forEach(cardName => {
+        if (!cardName) return;
+        if (!cardMap.has(cardName)) {
+          const expKey = getCardExpansionKey(cardName);
+          const meta = expansionMeta[expKey] || { name: expKey !== "unknown" ? expKey : "Dominion", colorClass: "exp-badge-base" };
+          cardMap.set(cardName, {
+            name: cardName,
+            expansion: expKey,
+            expansionName: meta.name,
+            colorClass: meta.colorClass,
+            image: getCardImage(cardName),
+            enabledCount: 0,
+            totalCount: 0,
+            counts: { extras: 0, dailies: 0, official: 0 }
+          });
+        }
+
+        const entry = cardMap.get(cardName);
+        entry.totalCount++;
+        if (enabled) {
+          entry.enabledCount++;
+          entry.counts[cat]++;
+        }
+      });
+    });
+  });
+
+  searchableCards = Array.from(cardMap.values());
+  searchableCards.sort((a, b) => {
+    if (a.enabledCount > 0 && b.enabledCount === 0) return -1;
+    if (a.enabledCount === 0 && b.enabledCount > 0) return 1;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function kingdomContainsCard(kingdom, targetCardName) {
+  const normTarget = targetCardName.trim().toLowerCase();
+  if (!normTarget) return false;
+
+  // 1. Check cards list
+  if (Array.isArray(kingdom.cards)) {
+    for (const card of kingdom.cards) {
+      const normCard = card.trim().toLowerCase();
+      if (normCard === normTarget) return true;
+      if (card.includes("/")) {
+        const parts = card.split("/").map(p => p.trim().toLowerCase());
+        if (parts.includes(normTarget)) return true;
+      }
+    }
+  }
+
+  // 2. Check landscapes
+  if (Array.isArray(kingdom.landscapes)) {
+    for (const land of kingdom.landscapes) {
+      const normLand = land.trim().toLowerCase();
+      if (normLand === normTarget) return true;
+      if (land.includes(",")) {
+        const parts = land.split(",").map(p => p.trim().toLowerCase());
+        if (parts.includes(normTarget)) return true;
+      }
+    }
+  }
+
+  // 3. Check targets
+  const targets = [kingdom.bane, kingdom.obelisk, kingdom.mouse, kingdom.ferryman, kingdom.riverboat];
+  for (const t of targets) {
+    if (typeof t === "string" && t.trim().toLowerCase() === normTarget) {
+      return true;
+    }
+  }
+
+  // 4. Check boons
+  if (Array.isArray(kingdom.druid)) {
+    for (const boon of kingdom.druid) {
+      if (boon.trim().toLowerCase() === normTarget) return true;
+    }
+  }
+
+  return false;
+}
+
+function kingdomContainsCardQuery(kingdom, query) {
+  if (kingdomContainsCard(kingdom, query)) return true;
+
+  const normQuery = query.trim().toLowerCase();
+  if (normQuery.length < 2) return false;
+
+  if (Array.isArray(kingdom.cards)) {
+    for (const card of kingdom.cards) {
+      if (card.toLowerCase().includes(normQuery)) return true;
+    }
+  }
+  if (Array.isArray(kingdom.landscapes)) {
+    for (const land of kingdom.landscapes) {
+      if (land.toLowerCase().includes(normQuery)) return true;
+    }
+  }
+  const targets = [kingdom.bane, kingdom.obelisk, kingdom.mouse, kingdom.ferryman, kingdom.riverboat];
+  for (const t of targets) {
+    if (typeof t === "string" && t.toLowerCase().includes(normQuery)) return true;
+  }
+  return false;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[m]));
+}
+
+function highlightMatch(text, query) {
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index === -1) return escapeHtml(text);
+  const before = text.substring(0, index);
+  const match = text.substring(index, index + query.length);
+  const after = text.substring(index + query.length);
+  return `${escapeHtml(before)}<span class="highlighted-match">${escapeHtml(match)}</span>${escapeHtml(after)}`;
+}
+
+function getCardSuggestions(query) {
+  const normQuery = query.trim().toLowerCase();
+  if (!normQuery) return [];
+
+  const matched = [];
+
+  for (const card of searchableCards) {
+    const effectiveCount = enabledExpansions.size < expansionKeys.length ? card.enabledCount : card.totalCount;
+    // Only suggest cards that have sets in enabled expansions if any enabled cards exist
+    if (effectiveCount === 0 && searchableCards.some(c => c.enabledCount > 0)) {
+      continue;
+    }
+
+    const cardLower = card.name.toLowerCase();
+    let score = -1;
+
+    if (cardLower === normQuery) {
+      score = 0;
+    } else if (cardLower.startsWith(normQuery)) {
+      score = 1;
+    } else {
+      const words = cardLower.split(/[\s/]+/);
+      if (words.some(w => w.startsWith(normQuery))) {
+        score = 2;
+      } else if (cardLower.includes(normQuery)) {
+        score = 3;
+      }
+    }
+
+    if (score >= 0) {
+      matched.push({ ...card, score, effectiveCount });
+    }
+  }
+
+  matched.sort((a, b) => {
+    if (a.score !== b.score) return a.score - b.score;
+    if (b.effectiveCount !== a.effectiveCount) return b.effectiveCount - a.effectiveCount;
+    return a.name.localeCompare(b.name);
+  });
+
+  return matched.slice(0, 8);
+}
+
+function renderAutocompleteDropdown(suggestions, query) {
+  if (!cardAutocompleteDropdown) return;
+  cardAutocompleteDropdown.innerHTML = "";
+
+  if (suggestions.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "px-4 py-3 text-xs text-slate-500 dark:text-slate-400 text-center";
+    empty.textContent = `No cards found matching "${query}"`;
+    cardAutocompleteDropdown.appendChild(empty);
+    cardAutocompleteDropdown.classList.remove("hidden");
+    if (cardSearchInput) cardSearchInput.setAttribute("aria-expanded", "true");
+    return;
+  }
+
+  suggestions.forEach((s, idx) => {
+    const item = document.createElement("div");
+    item.className = "autocomplete-item flex items-center justify-between gap-3 px-3.5 py-2 cursor-pointer rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors";
+    item.setAttribute("role", "option");
+    item.setAttribute("data-index", idx);
+
+    item.innerHTML = `
+      <div class="flex items-center gap-2.5 min-w-0">
+        ${s.image ? `
+          <img src="${s.image}" alt="" class="w-7 h-9 rounded object-cover shadow-sm bg-slate-200 dark:bg-slate-700 flex-shrink-0" loading="lazy" />
+        ` : `
+          <div class="w-7 h-9 rounded bg-amber-500/10 text-amber-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">
+            🃏
+          </div>
+        `}
+        <div class="min-w-0">
+          <div class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+            ${highlightMatch(s.name, query)}
+          </div>
+          <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <span class="w-2 h-2 rounded-full ${s.colorClass || 'bg-slate-400'} flex-shrink-0"></span>
+            <span class="truncate">${escapeHtml(s.expansionName)}</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0">
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/90 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+          ${s.effectiveCount} ${s.effectiveCount === 1 ? 'set' : 'sets'}
+        </span>
+      </div>
+    `;
+
+    item.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      selectCardSuggestion(s.name);
+    });
+
+    item.addEventListener("mouseenter", () => {
+      activeSuggestionIndex = idx;
+      updateActiveSuggestion();
+    });
+
+    cardAutocompleteDropdown.appendChild(item);
+  });
+
+  cardAutocompleteDropdown.classList.remove("hidden");
+  if (cardSearchInput) cardSearchInput.setAttribute("aria-expanded", "true");
+}
+
+function updateActiveSuggestion() {
+  if (!cardAutocompleteDropdown) return;
+  const items = cardAutocompleteDropdown.querySelectorAll(".autocomplete-item");
+  items.forEach((item, idx) => {
+    if (idx === activeSuggestionIndex) {
+      item.classList.add("active-item");
+      item.scrollIntoView({ block: "nearest" });
+    } else {
+      item.classList.remove("active-item");
+    }
+  });
+}
+
+function selectCardSuggestion(cardName) {
+  if (cardSearchInput) {
+    cardSearchInput.value = cardName;
+  }
+  if (cardSearchClearBtn) {
+    cardSearchClearBtn.classList.remove("hidden");
+  }
+  if (cardAutocompleteDropdown) {
+    cardAutocompleteDropdown.classList.add("hidden");
+    cardAutocompleteDropdown.innerHTML = "";
+    if (cardSearchInput) cardSearchInput.setAttribute("aria-expanded", "false");
+  }
+  executeCardSearch(cardName);
+}
+
+function executeCardSearch(cardName) {
+  if (!cardName || !cardName.trim()) {
+    clearCardSearch();
+    return;
+  }
+
+  const query = cardName.trim();
+  isCardSearchActive = true;
+  activeSearchCard = query;
+
+  const exactMatch = searchableCards.find(c => c.name.toLowerCase() === query.toLowerCase());
+  const searchTarget = exactMatch ? exactMatch.name : query;
+
+  if (locAbout) locAbout.classList.remove("active");
+  if (locKingdoms) locKingdoms.classList.add("active");
+  [tabExtras, tabOfficial, tabDailies, tabAbout].forEach(t => t && t.classList.remove("active"));
+
+  if (errorsElement) errorsElement.textContent = "";
+  if (expansionSelectorCard) expansionSelectorCard.classList.add("hidden");
+  if (cardSearchResultsHeader) cardSearchResultsHeader.classList.remove("hidden");
+
+  if (cardSearchClearBtn) cardSearchClearBtn.classList.remove("hidden");
+  if (cardSearchInput) cardSearchInput.value = searchTarget;
+
+  const allExtras = typeof kingdoms !== "undefined" ? kingdoms : [];
+  const allDailies = typeof dailyKingdoms !== "undefined" ? dailyKingdoms : [];
+  const allOfficial = typeof officialKingdoms !== "undefined" ? officialKingdoms : [];
+
+  const filterFn = (k) => {
+    if (!isKingdomEnabled(k)) return false;
+    return exactMatch
+      ? kingdomContainsCard(k, exactMatch.name)
+      : kingdomContainsCardQuery(k, query);
+  };
+
+  searchCategoryResults.extras = allExtras.filter(filterFn).map(k => ({ ...k, category: "extras" }));
+  searchCategoryResults.dailies = allDailies.filter(filterFn).map(k => ({ ...k, category: "dailies" }));
+  searchCategoryResults.official = allOfficial.filter(filterFn).map(k => ({ ...k, category: "official" }));
+
+  searchCategoryResults.dailies.sort((a, b) => {
+    if (a.date && b.date) return a.date.localeCompare(b.date);
+    return a.name.localeCompare(b.name);
+  });
+  searchCategoryResults.extras.sort((a, b) => a.name.localeCompare(b.name));
+  searchCategoryResults.official.sort((a, b) => a.name.localeCompare(b.name));
+
+  searchAllResults = [
+    ...searchCategoryResults.extras,
+    ...searchCategoryResults.dailies,
+    ...searchCategoryResults.official
+  ];
+
+  if (searchResultsTitle) {
+    searchResultsTitle.textContent = `Sets with "${searchTarget}"`;
+  }
+  if (searchResultsSubtitle) {
+    const total = searchAllResults.length;
+    if (total > 0) {
+      searchResultsSubtitle.textContent = `Found ${total} recommended set${total === 1 ? '' : 's'} across Extra Sets, Dailies, and Official Sets.`;
+    } else {
+      const disabledMatches = [
+        ...allExtras.filter(k => kingdomContainsCardQuery(k, query)),
+        ...allDailies.filter(k => kingdomContainsCardQuery(k, query)),
+        ...allOfficial.filter(k => kingdomContainsCardQuery(k, query))
+      ];
+      if (disabledMatches.length > 0) {
+        searchResultsSubtitle.textContent = `0 sets found in your enabled expansions. (Note: Found in ${disabledMatches.length} set(s) requiring expansions currently disabled in your configuration).`;
+      } else {
+        searchResultsSubtitle.textContent = `No sets found containing "${searchTarget}" across all categories.`;
+      }
+    }
+  }
+
+  renderSearchCategoryFilters();
+  filterSearchResultsCategory("all");
+}
+
+function renderSearchCategoryFilters() {
+  if (!searchCategoryFilters) return;
+  searchCategoryFilters.innerHTML = "";
+
+  const totalCount = searchAllResults.length;
+  const extrasCount = searchCategoryResults.extras.length;
+  const dailiesCount = searchCategoryResults.dailies.length;
+  const officialCount = searchCategoryResults.official.length;
+
+  const categories = [
+    { id: "all", label: "All Categories", count: totalCount },
+    { id: "extras", label: "Extra Sets", count: extrasCount },
+    { id: "dailies", label: "Dailies", count: dailiesCount },
+    { id: "official", label: "Official Sets", count: officialCount }
+  ];
+
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `search-cat-pill ${searchCategoryFilter === cat.id ? 'active' : ''}`;
+    btn.innerHTML = `<span>${cat.label}</span> <span class="text-xs opacity-75">(${cat.count})</span>`;
+    btn.onclick = () => filterSearchResultsCategory(cat.id);
+    searchCategoryFilters.appendChild(btn);
+  });
+}
+
+function filterSearchResultsCategory(cat) {
+  searchCategoryFilter = cat;
+
+  if (searchCategoryFilters) {
+    const buttons = searchCategoryFilters.querySelectorAll("button");
+    const catIds = ["all", "extras", "dailies", "official"];
+    buttons.forEach((btn, idx) => {
+      if (catIds[idx] === cat) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+
+  if (cat === "all") {
+    currentFilteredKingdoms = searchAllResults;
+  } else if (cat === "extras") {
+    currentFilteredKingdoms = searchCategoryResults.extras;
+  } else if (cat === "dailies") {
+    currentFilteredKingdoms = searchCategoryResults.dailies;
+  } else if (cat === "official") {
+    currentFilteredKingdoms = searchCategoryResults.official;
+  }
+
+  currentPage = 1;
+  renderCurrentPage();
+}
+
+function clearCardSearch(shouldRerender = true) {
+  isCardSearchActive = false;
+  activeSearchCard = "";
+  searchCategoryFilter = "all";
+  searchAllResults = [];
+  searchCategoryResults = { extras: [], dailies: [], official: [] };
+
+  if (cardSearchInput) cardSearchInput.value = "";
+  if (cardSearchClearBtn) cardSearchClearBtn.classList.add("hidden");
+  if (cardAutocompleteDropdown) {
+    cardAutocompleteDropdown.classList.add("hidden");
+    cardAutocompleteDropdown.innerHTML = "";
+    if (cardSearchInput) cardSearchInput.setAttribute("aria-expanded", "false");
+  }
+  if (cardSearchResultsHeader) cardSearchResultsHeader.classList.add("hidden");
+  if (expansionSelectorCard) expansionSelectorCard.classList.remove("hidden");
+
+  if (setCategory === "extras" && tabExtras) tabExtras.classList.add("active");
+  if (setCategory === "dailies" && tabDailies) tabDailies.classList.add("active");
+  if (setCategory === "official" && tabOfficial) tabOfficial.classList.add("active");
+
+  if (shouldRerender) {
+    getSets(1);
+  }
+}
+
+function clearCardSearchInput() {
+  if (cardSearchInput) {
+    cardSearchInput.value = "";
+    cardSearchInput.focus();
+  }
+  if (cardSearchClearBtn) cardSearchClearBtn.classList.add("hidden");
+  if (cardAutocompleteDropdown) {
+    cardAutocompleteDropdown.classList.add("hidden");
+    cardAutocompleteDropdown.innerHTML = "";
+    if (cardSearchInput) cardSearchInput.setAttribute("aria-expanded", "false");
+  }
+  if (isCardSearchActive) {
+    clearCardSearch(true);
+  }
+}
+
+function initCardSearch() {
+  if (!cardSearchInput || !cardAutocompleteDropdown) return;
+
+  cardSearchInput.addEventListener("input", (e) => {
+    const val = e.target.value;
+    if (cardSearchClearBtn) {
+      if (val.length > 0) {
+        cardSearchClearBtn.classList.remove("hidden");
+      } else {
+        cardSearchClearBtn.classList.add("hidden");
+      }
+    }
+
+    if (!val.trim()) {
+      cardAutocompleteDropdown.classList.add("hidden");
+      cardAutocompleteDropdown.innerHTML = "";
+      cardSearchInput.setAttribute("aria-expanded", "false");
+      currentSuggestions = [];
+      activeSuggestionIndex = -1;
+      return;
+    }
+
+    currentSuggestions = getCardSuggestions(val);
+    activeSuggestionIndex = -1;
+    renderAutocompleteDropdown(currentSuggestions, val);
+  });
+
+  cardSearchInput.addEventListener("focus", () => {
+    const val = cardSearchInput.value;
+    if (val.trim()) {
+      currentSuggestions = getCardSuggestions(val);
+      activeSuggestionIndex = -1;
+      renderAutocompleteDropdown(currentSuggestions, val);
+    }
+  });
+
+  cardSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (cardAutocompleteDropdown.classList.contains("hidden")) {
+        const val = cardSearchInput.value;
+        if (val.trim()) {
+          currentSuggestions = getCardSuggestions(val);
+          renderAutocompleteDropdown(currentSuggestions, val);
+        }
+        return;
+      }
+      if (currentSuggestions.length > 0) {
+        activeSuggestionIndex = (activeSuggestionIndex + 1) % currentSuggestions.length;
+        updateActiveSuggestion();
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (currentSuggestions.length > 0 && !cardAutocompleteDropdown.classList.contains("hidden")) {
+        activeSuggestionIndex = (activeSuggestionIndex - 1 + currentSuggestions.length) % currentSuggestions.length;
+        updateActiveSuggestion();
+      }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (activeSuggestionIndex >= 0 && activeSuggestionIndex < currentSuggestions.length) {
+        selectCardSuggestion(currentSuggestions[activeSuggestionIndex].name);
+      } else if (cardSearchInput.value.trim()) {
+        cardAutocompleteDropdown.classList.add("hidden");
+        cardSearchInput.setAttribute("aria-expanded", "false");
+        executeCardSearch(cardSearchInput.value.trim());
+      }
+    } else if (e.key === "Escape") {
+      cardAutocompleteDropdown.classList.add("hidden");
+      cardSearchInput.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    const wrapper = document.getElementById("cardSearchWrapper");
+    if (wrapper && !wrapper.contains(e.target)) {
+      cardAutocompleteDropdown.classList.add("hidden");
+      cardSearchInput.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
+// ==========================================
 // Initialization
 // ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
@@ -705,6 +1418,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (e) {
     console.warn("Could not load expansions.json, defaulting to all expansions enabled.", e);
   }
+
+  buildCardSearchIndex();
+  initCardSearch();
 
   goToLocation("extras");
 });
