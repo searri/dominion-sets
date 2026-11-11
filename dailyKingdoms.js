@@ -144,5 +144,12 @@ var dailyKingdoms = [
         date: "2026-11-03",
         cards: ["Courtyard", "Lurker", "Pawn", "Steward", "Bridge", "Duke", "Minion", "Trading Post", "Upgrade", "Harem"],
         expansions: ["intrigue"]
+    },
+    {
+        name: "Nov 11, 2026 Daily",
+        date: "2026-11-11",
+        cards: ["Monastery", "Pixie", "Ghost Town", "Secret Cave", "Plaza", "Herald", "Cobbler", "Pooka", "Tormentor", "Werewolf"],
+        expansions: ["cornguilds", "nocturne"],
+        extras: ["Wish", "Imp", "Boons", "Hexes"]
     }
 ];
