@@ -151,5 +151,11 @@ var dailyKingdoms = [
         cards: ["Monastery", "Pixie", "Ghost Town", "Secret Cave", "Plaza", "Herald", "Cobbler", "Pooka", "Tormentor", "Werewolf"],
         expansions: ["cornguilds", "nocturne"],
         extras: ["Wish", "Imp", "Boons", "Hexes"]
+    },
+    {
+        name: "Nov 23, 2026 Daily",
+        date: "2026-11-23",
+        expansions: ["seaside", "base"],
+        cards: ["Cellar", "Lookout", "Village", "Gardens", "Island", "Corsair", "Merchant Ship", "Outpost", "Treasury", "Wharf"]
     }
 ];
