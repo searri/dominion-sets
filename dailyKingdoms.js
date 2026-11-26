@@ -157,5 +157,12 @@ var dailyKingdoms = [
         date: "2026-11-23",
         expansions: ["seaside", "base"],
         cards: ["Cellar", "Lookout", "Village", "Gardens", "Island", "Corsair", "Merchant Ship", "Outpost", "Treasury", "Wharf"]
+    },
+    {
+        name: "Nov 25, 2026 Daily",
+        date: "2026-11-26",
+        expansions: ["intrigue", "empires"],
+        landscapes: ["Salt the Earth", "Ritual"],
+        cards: ["Royal Blacksmith", "Catapult", "Shanty Town", "Steward", "Baron", "Conspirator", "Temple", "Replace", "Upgrade", "Wild Hunt"]
     }
 ];
