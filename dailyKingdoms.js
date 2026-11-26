@@ -163,6 +163,6 @@ var dailyKingdoms = [
         date: "2026-11-26",
         expansions: ["intrigue", "empires"],
         landscapes: ["Salt the Earth", "Ritual"],
-        cards: ["Royal Blacksmith", "Catapult", "Shanty Town", "Steward", "Baron", "Conspirator", "Temple", "Replace", "Upgrade", "Wild Hunt"]
+        cards: ["Royal Blacksmith", "Catapult / Rocks", "Shanty Town", "Steward", "Baron", "Conspirator", "Temple", "Replace", "Upgrade", "Wild Hunt"]
     }
 ];
